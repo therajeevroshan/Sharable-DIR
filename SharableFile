@@ -93,3 +93,70 @@ new Vue({
 
 </body>
 </html>
+
+
+
+<template>
+  <div>
+    <button @click="fetchData">Fetch Data</button>
+    <div v-if="data" class="data-box">
+      <pre>{{ data }}</pre>
+    </div>
+    <div v-else-if="isLoading">Loading data...</div>
+    <div v-else-if="error">Error: {{ error }}</div>
+  </div>
+</template>
+
+<script>
+import axios from 'axios';
+
+export default {
+  name: 'MyComponent',
+  data() {
+    return {
+      data: null,
+      isLoading: false,
+      error: null,
+      accessToken: 'YOUR_ACCESS_TOKEN', // Replace with your actual access token
+      queryParams: { // Replace with your query parameter key and value
+        key: 'value',
+      },
+    };
+  },
+  methods: {
+    async fetchData() {
+      this.isLoading = true;
+      this.error = null; // Clear any previous errors
+
+      try {
+        const response = await axios.post(
+          'https://your-api-endpoint.com/api/endpoint?key=value', // Replace with your endpoint URL
+          { data: yourData }, // Replace with your data to be sent in the request body
+          {
+            headers: {
+              Authorization: `Bearer ${this.accessToken}`, // Include access token in header
+            },
+          }
+        );
+        this.data = JSON.stringify(response.data, null, 2); // Formatted JSON
+      } catch (error) {
+        this.error = error.message;
+      } finally {
+        this.isLoading = false;
+      }
+    },
+  },
+};
+</script>
+
+<style scoped>
+.data-box {
+  border: 1px solid #ddd;
+  padding: 10px;
+  background-color: #eee;
+  font-family: monospace;
+}
+</style>
+
+
+
